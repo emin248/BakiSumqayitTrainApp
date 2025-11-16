@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bakı-Sumqayıt Tren</string>
+    <string name="search_title">Reys Axtarışı</string>
+    <string name="route">Marşrut</string>
+    <string name="baki_pirsagi_sumqayit">Bakı-Pirşağı-Sumqayıt</string>
+    <string name="from_date">Haradan</string>
+    <string name="to_date">Haraya</string>
+    <string name="select_date">Tarix seçin...</string>
+    <string name="day_of_week">Gün növü</string>
+    <string name="bazar">Bazar</string>
+    <string name="swap_stations">Stansiyaları dəyiş</string>
+    <string name="search">Axtar</string>
+    <string name="search_info">Başlanğıc və son stansiyaları seçin "Axtar" düyməsini basın.</string>
+    <string name="no_results">Nəticə tapılmadı</string>
+    <string name="loading">Yüklənir...</string>
+    <string name="error">Xəta baş verdi</string>
+    <string name="retry">Yenidən cəhd edin</string>
+    <string name="departure_time">Çıxış Vaxtı</string>
+    <string name="arrival_time">Gəliş Vaxtı</string>
+    <string name="duration">Müddət</string>
+    <string name="price">Qiymət</string>
+</resources>
