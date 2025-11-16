@@ -10,10 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -26,9 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var swapButton: ImageButton
     private lateinit var resultsRecyclerView: RecyclerView
     private lateinit var resultsAdapter: TrainResultsAdapter
-
-    private var mInterstitialAd: InterstitialAd? = null
-    private val AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712" // Test Ad Unit ID
+    private lateinit var adManager: AdManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Mobile Ads SDK
         MobileAds.initialize(this)
+
+        // Initialize AdManager
+        adManager = AdManager(this)
 
         // Initialize UI components
         initializeUI()
@@ -115,61 +113,19 @@ class MainActivity : AppCompatActivity() {
         val toDate = toDateSpinner.selectedItem.toString()
 
         if (fromDate == "Tarix seçin..." || toDate == "Tarix seçin...") {
-            Toast.makeText(this, "Başlanğıc və son stansiyaları seçin \"Axtar\" düyməsini basın.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Başlanğıc və son stansiyaları seçin \"Axtar\" düyməsini basın.",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
-        showInterstitialAd()
-    }
-
-    private fun showInterstitialAd() {
-        loadInterstitialAd()
-    }
-
-    private fun loadInterstitialAd() {
-        val adRequest = AdRequest.Builder().build()
-
-        InterstitialAd.load(
-            this,
-            AD_UNIT_ID,
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    mInterstitialAd = interstitialAd
-                    showAd()
-                }
-
-                override fun onAdFailedToLoad(adError: com.google.android.gms.ads.LoadAdError) {
-                    mInterstitialAd = null
-                    // If ad fails to load, proceed with search anyway
-                    performSearch()
-                }
-            }
+        // Show ad and then perform search
+        adManager.showAd(
+            onDismissed = { performSearch() },
+            onFailed = { performSearch() }
         )
-    }
-
-    private fun showAd() {
-        if (mInterstitialAd != null) {
-            mInterstitialAd?.fullScreenContentCallback =
-                object : com.google.android.gms.ads.FullScreenContentCallback() {
-                    override fun onAdDismissedFullScreenContent() {
-                        performSearch()
-                        mInterstitialAd = null
-                    }
-
-                    override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
-                        performSearch()
-                        mInterstitialAd = null
-                    }
-
-                    override fun onAdShowedFullScreenContent() {
-                        // Ad is shown
-                    }
-                }
-            mInterstitialAd?.show(this@MainActivity)
-        } else {
-            performSearch()
-        }
     }
 
     private fun performSearch() {
@@ -180,8 +136,20 @@ class MainActivity : AppCompatActivity() {
             try {
                 val results = TrainApiClient.searchTrains(fromDate, toDate)
                 resultsAdapter.updateResults(results)
+                
+                if (results.isEmpty()) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Nəticə tapılmadı",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "Xəta: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@MainActivity,
+                    "Xəta: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
