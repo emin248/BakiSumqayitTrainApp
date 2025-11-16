@@ -3,6 +3,7 @@ package com.bakisumqayit.trainapp
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toDateSpinner: Spinner
     private lateinit var dayOfWeekSpinner: Spinner
     private lateinit var searchButton: Button
+    private lateinit var swapButton: ImageButton
     private lateinit var resultsRecyclerView: RecyclerView
     private lateinit var resultsAdapter: TrainResultsAdapter
 
@@ -40,7 +42,12 @@ class MainActivity : AppCompatActivity() {
 
         // Set up search button click listener
         searchButton.setOnClickListener {
-            showInterstitialAd()
+            performSearchWithAd()
+        }
+
+        // Set up swap button click listener
+        swapButton.setOnClickListener {
+            swapStations()
         }
     }
 
@@ -50,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         toDateSpinner = findViewById(R.id.toDateSpinner)
         dayOfWeekSpinner = findViewById(R.id.dayOfWeekSpinner)
         searchButton = findViewById(R.id.searchButton)
+        swapButton = findViewById(R.id.swapButton)
         resultsRecyclerView = findViewById(R.id.resultsRecyclerView)
 
         // Set up spinners with data
@@ -77,7 +85,12 @@ class MainActivity : AppCompatActivity() {
             "12.11.2025",
             "13.11.2025",
             "14.11.2025",
-            "15.11.2025"
+            "15.11.2025",
+            "16.11.2025",
+            "17.11.2025",
+            "18.11.2025",
+            "19.11.2025",
+            "20.11.2025"
         )
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, dates)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -90,6 +103,23 @@ class MainActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, days)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         dayOfWeekSpinner.adapter = adapter
+    }
+
+    private fun swapStations() {
+        // In this case, route is fixed, but we can show a message
+        Toast.makeText(this, "Marşrut sabitdir", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun performSearchWithAd() {
+        val fromDate = fromDateSpinner.selectedItem.toString()
+        val toDate = toDateSpinner.selectedItem.toString()
+
+        if (fromDate == "Tarix seçin..." || toDate == "Tarix seçin...") {
+            Toast.makeText(this, "Başlanğıc və son stansiyaları seçin \"Axtar\" düyməsini basın.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        showInterstitialAd()
     }
 
     private fun showInterstitialAd() {
@@ -145,11 +175,6 @@ class MainActivity : AppCompatActivity() {
     private fun performSearch() {
         val fromDate = fromDateSpinner.selectedItem.toString()
         val toDate = toDateSpinner.selectedItem.toString()
-
-        if (fromDate == "Tarix seçin..." || toDate == "Tarix seçin...") {
-            Toast.makeText(this, "Lütfən tarixləri seçin", Toast.LENGTH_SHORT).show()
-            return
-        }
 
         lifecycleScope.launch {
             try {

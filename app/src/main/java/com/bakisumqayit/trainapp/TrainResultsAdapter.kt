@@ -12,12 +12,22 @@ class TrainResultsAdapter(private var results: List<TrainResult>) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(result: TrainResult) {
             binding.apply {
+                // Main departure time
                 departureTimeText.text = result.departureTime
+                
+                // Stations info
+                stationsText.text = "${result.fromStation} → ${result.toStation}"
+                
+                // Price
+                priceText.text = result.price
+                
+                // Train number
+                trainNumberText.text = "Reys: ${result.trainNumber}"
+                
+                // Details row
+                departureTimeText2.text = result.departureTime
                 arrivalTimeText.text = result.arrivalTime
                 durationText.text = result.duration
-                priceText.text = result.price
-                trainNumberText.text = "Reys: ${result.trainNumber}"
-                stationsText.text = "${result.fromStation} → ${result.toStation}"
             }
         }
     }
